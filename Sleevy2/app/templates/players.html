@@ -27,8 +27,9 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="static/js/script.js"></script>
     <div id="player_list">
+        <p>Id</p><p>Pseudo</p><p>Jeu</p><p>Graphique</p>
         {% for player in players %}
-        <p>{{player.id}}</p><p>{{player.username}}</p><p>{{player.game}}</p><a href="Graphiqe d'entrainement"></a>
+        <p>{{player.id}}</p><p>{{player.username}}</p><p>{{player.game}}</p><a href="">Graphiqe d'entrainement</a>
         {% endfor %}
     </div>
     <a href="{{ url_for('logout') }}"> Logout </a>

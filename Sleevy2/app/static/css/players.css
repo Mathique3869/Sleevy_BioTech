@@ -21,3 +21,14 @@ h1 {
 .button.clicked {
     background-color: #28a745;
 }
+
+#player_list{
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+}
+
+#player_list >p{
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    margin-top: 0;
+}
