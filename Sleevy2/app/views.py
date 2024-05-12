@@ -1,3 +1,4 @@
+
 from app import app, db
 from flask import render_template, request, redirect, url_for, session, flash, jsonify
 from app.models import Coach, Player
@@ -11,12 +12,12 @@ def index():
 
 
 count = 0
-stopped = True  
+stopped = True  # Commencez par arrêter l'écoute du clavier
 keyboard_listener = None
 
 def start_keyboard_listener():
     global count, stopped
-    count = 0  
+    count = 0  # Réinitialiser le compteur
     with open('count.txt', 'w') as file:
         file.write(str(count))
 
@@ -25,12 +26,12 @@ def start_keyboard_listener():
         count += 1
 
     def on_release(key):
-        pass  
+        pass  # Ne rien faire lors de la libération de la touche
 
     listener = keyboard.Listener(on_press=on_press, on_release=on_release)
     listener.start()
 
-   
+    # Attendre jusqu'à ce que le bouton "Stop" soit enfoncé
     while stopped:
         pass
 
@@ -79,19 +80,6 @@ def register_coaches():
     else:
         return "ERREUR"
     
-@app.route('/login_coaches', methods=['POST'])
-def login_coaches():
-    form = request.form
-    coach = Coach.query.filter_by(username=form['name']).first()
-    if not coach:
-        flash("Ce coach n'existe pas")
-        return redirect(url_for('index'))
-    if coach.check_password(form['password']):
-        session['coach'] = coach.id
-        return redirect(url_for('players'))
-    else:
-        flash('Le mot de passe est faux')
-        return redirect(url_for('index'))
 
 
 def toggle_listen():
@@ -107,6 +95,23 @@ def toggle_listen():
         with open('count.txt', 'r') as file:
             count = int(file.read())
         return jsonify({"count": count})
+    
+
+@app.route('/login_coaches', methods=['POST'])
+def login_coaches():
+    form = request.form
+    coach = Coach.query.filter_by(username=form['name']).first()
+    if not coach:
+        flash("Ce coach n'existe pas")
+        return redirect(url_for('index'))
+    if coach.check_password(form['password']):
+        session['coach'] = coach.id
+        return redirect(url_for('players'))
+    else:
+        flash('Le mot de passe est faux')
+        return redirect(url_for('index'))
+
+
 
 @app.route('/players', methods=['POST', 'GET'])
 def players():
