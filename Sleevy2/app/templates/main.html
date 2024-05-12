@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% block title %}Bienvenue sur Sleevy!{% endblock %}
+{% block head %}
+    {{ super() }}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+{% endblock %}
+{% block content %}
+    <h1>Bienvenu sur Sleevy</h1>
+
+    
+    <form action='/register_coaches' method="post">
+        <h2>Enregistrement</h2>
+        <label>Pseudo</label>
+        <input name="name" type="text" required>
+        <label>Choisissez un jeu: </label>
+        <select name="game" id="game_select" required>
+            <option value="">--Choisissez un jeu </option>
+            <option value="apex"> Apex </option>
+            <option value="lol"> League of legends</option>
+            <option value="rl"> Rocket League </option>
+            <option value="valo"> Valorant </option>
+        </select>
+        <label>Mot de passe</label>
+        <input name="password" type="password" required>
+        <input type="submit" value="S'enregistrer">
+    </form>
+    <form action='/login_coaches' method="post">
+        <h3>Connection</h3>
+        <label>Pseudo</label>
+        <input name="name" type="text" required>
+        <label>id</label>
+        <input name="id" type="text" required>
+        <label>Mot de passe</label>
+        <input name="password" type="password" required>
+        <input type="submit" value="Se connecter">
+    </form>
+
+
+{% endblock %}

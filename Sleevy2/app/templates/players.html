@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block title %}Bienvenue sur Sleevy!{% endblock %}
+{% block head %}
+    {{ super() }}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/players.css') }}">
+{% endblock %}
+{% block content %}
+    <h1> Bonjour Coach ! Bienvenu sur votre page !</h1>
+    <form name='player_registration' action="{{ url_for('register_player') }}" method="post"> 
+        <h1> Ajoutez un nouveau joueur</h1>
+        
+        <label>Pseudo</label>
+        <input name="name" type="text" required>
+        <label>Jeu</label>
+        <select name="game" id="game_select" required>
+            <option value="">--Choisissez un jeu </option>
+            <option value="apex"> Apex </option>
+            <option value="lol"> League of legends</option>
+            <option value="rl"> Rocket League </option>
+            <option value="valo"> Valorant </option>
+            <input type="submit"/>
+        </select>
+    </form>
+    <button id="startButton" onclick="startListen()">Start Listen</button>
+    <button id="stopButton" onclick="stopListen()" style="display: none;">Stop Listen</button>
+    <p id="countDisplay"></p>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="static/js/script.js"></script>
+    <div id="player_list">
+        {% for player in players %}
+        <p>{{player.id}}</p><p>{{player.username}}</p><p>{{player.game}}</p><a href="Graphiqe d'entrainement"></a>
+        {% endfor %}
+    </div>
+    <a href="{{ url_for('logout') }}"> Logout </a>
+{% endblock %}
+         
+ 
