@@ -1,65 +1,37 @@
 
 from app import app, db
 from flask import render_template, request, redirect, url_for, session, flash, jsonify
-from app.models import Coach, Player
+from app.models import Coach, Player, Charts
 from threading import Thread
-from pynput import keyboard
+import base64
+from sqlalchemy import desc
+from PIL import Image
+from io import BytesIO
 import os
 
 @app.route('/')
 def index():
     return render_template('main.html')
 
-
-count = 0
-stopped = True  # Commencez par arrêter l'écoute du clavier
-keyboard_listener = None
-
-def start_keyboard_listener():
-    global count, stopped
-    count = 0  # Réinitialiser le compteur
-    with open('count.txt', 'w') as file:
-        file.write(str(count))
-
-    def on_press(key):
-        global count
-        count += 1
-
-    def on_release(key):
-        pass  # Ne rien faire lors de la libération de la touche
-
-    listener = keyboard.Listener(on_press=on_press, on_release=on_release)
-    listener.start()
-
-    # Attendre jusqu'à ce que le bouton "Stop" soit enfoncé
-    while stopped:
-        pass
-
-    print("Arrêt de l'écoute du clavier.")
-    with open('count.txt', 'w') as file:
-        file.write(str(count))
-
-@app.route("/start_listen", methods=["POST"])
-def start_listen():
-    global stopped, keyboard_listener
-    if keyboard_listener and keyboard_listener.is_alive():
-        return jsonify({"message": "L'écoute du clavier est déjà en cours."})
-    else:
-        stopped = False
-        keyboard_listener = Thread(target=start_keyboard_listener)
-        keyboard_listener.start()
-        return jsonify({"message": "L'écoute du clavier a démarré."})
-
-@app.route("/stop_listen", methods=["POST"])
-def stop_listen():
-    global stopped
-    stopped = True
-    return jsonify({"message": "L'écoute du clavier a été arrêtée."})
-
-@app.route("/get_count", methods=["GET"])
-def get_count():
-    global count
-    return jsonify({"count": count})
+@app.route('/add', methods=['POST'])
+def add_data():
+    type = request.json['type']
+    charts64 = request.json['charts64']
+    new_data = Charts(type=type, charts64=charts64)
+    db.session.add(new_data)
+    db.session.commit()
+    
+    
+@app.route('/graph/<username>')
+def create_charts(username):
+    emg=Charts.query.order_by(desc(Charts.id)).first()
+    emgb64=emg.charts64
+    cat=emg.type
+    img = base64.b64decode(emgb64)
+    image = Image.open(BytesIO(img))
+    image.save("C:/Users/achil/Desktop/Entrainement/"+username+"_"+cat+".png")
+    flash("Les graphiques d'entrainement de "+username+" ont été créés ")
+    return redirect(url_for('players'))
 
 
 @app.route('/register_coaches', methods=['POST'])
@@ -81,22 +53,6 @@ def register_coaches():
         return "ERREUR"
     
 
-
-def toggle_listen():
-    global stopped, count
-    if request.method == "POST":
-        stopped = not stopped
-        if stopped:
-            print("Arrêt de l'écoute du clavier.")
-        else:
-            print("Reprise de l'écoute du clavier.")
-        return jsonify({"message": "L'écoute du clavier a été arrêtée ou reprise."})
-    else:
-        with open('count.txt', 'r') as file:
-            count = int(file.read())
-        return jsonify({"count": count})
-    
-
 @app.route('/login_coaches', methods=['POST'])
 def login_coaches():
     form = request.form
@@ -110,7 +66,6 @@ def login_coaches():
     else:
         flash('Le mot de passe est faux')
         return redirect(url_for('index'))
-
 
 
 @app.route('/players', methods=['POST', 'GET'])
@@ -127,16 +82,6 @@ def players():
 def logout():
     session.pop('coach', None)
     return redirect(url_for('index'))
-
-
-
-@app.route('/coach', methods=['POST', 'GET'])
-def individual_coach():
-    pseudo = request.form['name']
-    game = request.form['game']
-    prez="Bonjour " + pseudo + " vous jouez à " + game
-    return prez
-
 
 @app.route('/register_player', methods=['POST'])
 def register_player():
