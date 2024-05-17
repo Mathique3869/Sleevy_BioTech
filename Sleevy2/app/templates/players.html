@@ -22,15 +22,10 @@
             <input type="submit"/>
         </select>
     </form>
-    <button id="startButton" onclick="startListen()">Start Listen</button>
-    <button id="stopButton" onclick="stopListen()" style="display: none;">Stop Listen</button>
-    <p id="countDisplay"></p>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="static/js/script.js"></script>
     <div id="player_list">
         <p>Id</p><p>Pseudo</p><p>Jeu</p><p>Graphique</p>
         {% for player in players %}
-        <p>{{player.id}}</p><p>{{player.username}}</p><p>{{player.game}}</p><a href="">Graphiqe d'entrainement</a>
+        <p>{{player.id}}</p><p>{{player.username}}</p><p>{{player.game}}</p><a href="{{ url_for('create_charts', username=player.username) }}">Graphiqe d'entrainement</a>
         {% endfor %}
     </div>
     <a href="{{ url_for('logout') }}"> Logout </a>

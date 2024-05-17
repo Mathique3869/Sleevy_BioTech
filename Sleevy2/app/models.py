@@ -20,18 +20,13 @@ class Player(db.Model):
     username = db.Column(db.String(25), unique=True,nullable=False)
     game = db.Column(db.String(25), nullable=False)
     coach_id = db.Column(db.Integer, db.ForeignKey('coach.id'))
-    charts = db.relationship('Charts', backref='player')
-    rawdata = db.relationship('RawData', backref='player')
+   
     
     
 class Charts(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    charts = db.Column(db.LargeBinary)
-    player_id = db.Column(db.Integer, db.ForeignKey('player.id'))
+    type = db.Column(db.String(10))
+    charts64 = db.Column(db.Text)
 
+    
 
-class RawData(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    list_data = db.Column(db.Text)
-    creation_date = db.Column(db.DateTime(timezone=True), default=datetime.now)
-    player_id = db.Column(db.Integer, db.ForeignKey('player.id'))
