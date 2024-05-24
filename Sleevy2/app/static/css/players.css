@@ -116,6 +116,58 @@ form .form-row .textarea{
   height: 45px!important;
   width: 25%!important;
 }
+
+
+.custom-button-container {
+  display: flex;
+  justify-content: space-between;
+}
+
+.custom-button {
+  position: relative;
+  overflow: hidden;
+  height: 50px; 
+  width: calc(50% - 10px); 
+  border: none;
+  color: #fff;
+  font-size: 17px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  cursor: pointer;
+  background: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px; /* Ajoutez un bord arrondi */
+}
+
+.custom-button .inner {
+  height: 100%;
+  width: 300%;
+  position: absolute;
+  left: -100%;
+  background: -webkit-linear-gradient(left, #60f7f5, #667bff);
+  transition: all 0.4s;
+}
+
+.custom-button:hover .inner {
+  left: 0;
+}
+
+.custom-button span {
+  position: relative;
+  z-index: 2;
+}
+
+
+@media (max-width: 700px) {
+  .custom-button {
+    width: 70%;
+  }
+}
+
+
 .submit-btn .input-data .inner{
   height: 100%;
   width: 300%;

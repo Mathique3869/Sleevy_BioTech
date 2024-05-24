@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/players.css') }}">
     <meta charset="UTF-8">
     <title>Sleevy</title>
 </head>
@@ -9,61 +9,15 @@
     <div class="title">
         Sleevy
     </div>
-    <div class="container">
-        <div class="text"></div>
-        <div class="text">
-           Enregistrez-vous maintenant
-        </div>
-        <form action='/register_coaches' method="post">
-            <div class="form-row">
-                <div class="input-data">
-                   <input type="text" name="username" required>
-                   <div class="underline"></div>
-                   <label for="">Pseudonyme</label>
-                </div>
-                <div class="input-data">
-                   <input type="password" name="password" required>
-                   <div class="underline"></div>
-                   <label for="">Mot de passe</label>
-                </div>
-                <div class="input-data">
-                    <input type="text" name="game" required>
-                    <div class="underline"></div>
-                    <label for="">Jeu</label>
-                </div>
-            </div>
-            <div class="form-row submit-btn">
-                <div class="input-data">
-                    <div class="inner"></div>
-                    <input type="submit" value="S'enregistrer">
-                </div>
-            </div>
-        </form>
-    </div>
-    <div class="container">
-        <div class="text">
-            Connexion
-        </div>   
-        <form action='/login_coaches' method="post">
-            <div class="form-row">
-                <div class="input-data">
-                   <input type="text" name="username" required>
-                   <div class="underline"></div>
-                   <label for="">Pseudonyme</label>
-                </div>
-                <div class="input-data">
-                   <input type="password" name="password" required>
-                   <div class="underline"></div>
-                   <label for="">Mot de passe</label>
-                </div>
-            </div>
-            <div class="form-row submit-btn">
-                <div class="input-data">
-                    <div class="inner"></div>
-                    <input type="submit" value="Se Connecter">
-                </div>
-            </div>
-        </form>
+    <div class="container custom-button-container">
+        <button class="custom-button" onclick="window.location.href ='/login';">
+            <div class="inner"></div>
+            <span>Se Connecter</span>
+        </button>
+        <button class="custom-button" onclick="window.location.href ='/register';">
+            <div class="inner"></div>
+            <span>S'enregistrer</span>
+        </button>
     </div>
 </body>
 </html>

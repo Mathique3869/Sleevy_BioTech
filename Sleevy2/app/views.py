@@ -14,6 +14,14 @@ import os
 def index():
     return render_template('main.html')
 
+@app.route('/register')
+def register():
+    return render_template('register.html')
+
+@app.route('/login')
+def login():
+    return render_template('login.html')    
+
 @app.route('/add', methods=['POST'])
 def add_data():
     type = request.json['type']
@@ -22,7 +30,10 @@ def add_data():
     db.session.add(new_data)
     db.session.commit()
     
-    
+
+
+
+
 @app.route('/graph/<username>')
 def create_charts(username):
     emg=Charts.query.order_by(desc(Charts.id)).first()
