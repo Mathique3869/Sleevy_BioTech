@@ -4,6 +4,7 @@ from flask import render_template, request, redirect, url_for, session, flash, j
 from app.models import Coach, Player, Charts
 from threading import Thread
 import base64
+from datetime import datetime
 from sqlalchemy import desc
 from PIL import Image
 from io import BytesIO
@@ -29,34 +30,35 @@ def create_charts(username):
     cat=emg.type
     img = base64.b64decode(emgb64)
     image = Image.open(BytesIO(img))
-    image.save("C:/Users/achil/Desktop/Entrainement/"+username+"_"+cat+".png")
+    date= datetime.now().strftime("%d_%m_%Y_%Hh%M")
+    image.save("C:/Users/achil/Desktop/Entrainement/"+username+"_"+cat+"_"+date+".png")
     flash("Les graphiques d'entrainement de "+username+" ont été créés ")
     return redirect(url_for('players'))
 
 
 @app.route('/register_coaches', methods=['POST'])
 def register_coaches():
-    form= request.form
-    new_coach= Coach(
-        username=form['name'],
+    form = request.form
+    new_coach = Coach(
+        username=form['username'],
         game=form['game']
-        
     )
     new_coach.set_password(form['password'])
     db.session.add(new_coach)
     db.session.commit()
-    coach=Coach.query.filter_by(username=form['name']).first()
-    if coach:
-        coach_id=str(coach.id)
-        return 'Bravo vous êtes enregistrez il est important de notez votre ID vous en aurez besoin pour vous connecter : ' + coach_id
-    else:
-        return "ERREUR"
     
+    coach = Coach.query.filter_by(username=form['username']).first()
+    if coach:
+        session['coach'] = coach.id
+        return redirect(url_for('players'))
+    else:
+        flash ("ERREUR")
+        return redirect(url_for('players'))
 
 @app.route('/login_coaches', methods=['POST'])
 def login_coaches():
     form = request.form
-    coach = Coach.query.filter_by(username=form['name']).first()
+    coach = Coach.query.filter_by(username=form['username']).first()
     if not coach:
         flash("Ce coach n'existe pas")
         return redirect(url_for('index'))
@@ -86,11 +88,11 @@ def logout():
 @app.route('/register_player', methods=['POST'])
 def register_player():
     form = request.form
-    username= form['name']
+    username= form['username']
     new_player =  Player.query.filter_by(username=username).first()
     if not new_player:
         new_player = Player(
-            username = form['name'],
+            username = form['username'],
             game = form['game'],
             coach_id = session['coach'],
         )
