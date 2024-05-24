@@ -1,39 +1,69 @@
-{% extends "base.html" %}
-{% block title %}Bienvenue sur Sleevy!{% endblock %}
-{% block head %}
-    {{ super() }}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-{% endblock %}
-{% block content %}
-    <h1>Bienvenu sur Sleevy</h1>
-
-    
-    <form action='/register_coaches' method="post">
-        <h2>Enregistrement</h2>
-        <label>Pseudo</label>
-        <input name="name" type="text" required>
-        <label>Choisissez un jeu: </label>
-        <select name="game" id="game_select" required>
-            <option value="">--Choisissez un jeu </option>
-            <option value="apex"> Apex </option>
-            <option value="lol"> League of legends</option>
-            <option value="rl"> Rocket League </option>
-            <option value="valo"> Valorant </option>
-        </select>
-        <label>Mot de passe</label>
-        <input name="password" type="password" required>
-        <input type="submit" value="S'enregistrer">
-    </form>
-    <form action='/login_coaches' method="post">
-        <h3>Connection</h3>
-        <label>Pseudo</label>
-        <input name="name" type="text" required>
-        <label>id</label>
-        <input name="id" type="text" required>
-        <label>Mot de passe</label>
-        <input name="password" type="password" required>
-        <input type="submit" value="Se connecter">
-    </form>
-
-
-{% endblock %}
+    <meta charset="UTF-8">
+    <title>Sleevy</title>
+</head>
+<body>
+    <div class="title">
+        Sleevy
+    </div>
+    <div class="container">
+        <div class="text"></div>
+        <div class="text">
+           Enregistrez-vous maintenant
+        </div>
+        <form action='/register_coaches' method="post">
+            <div class="form-row">
+                <div class="input-data">
+                   <input type="text" name="username" required>
+                   <div class="underline"></div>
+                   <label for="">Pseudonyme</label>
+                </div>
+                <div class="input-data">
+                   <input type="password" name="password" required>
+                   <div class="underline"></div>
+                   <label for="">Mot de passe</label>
+                </div>
+                <div class="input-data">
+                    <input type="text" name="game" required>
+                    <div class="underline"></div>
+                    <label for="">Jeu</label>
+                </div>
+            </div>
+            <div class="form-row submit-btn">
+                <div class="input-data">
+                    <div class="inner"></div>
+                    <input type="submit" value="S'enregistrer">
+                </div>
+            </div>
+        </form>
+    </div>
+    <div class="container">
+        <div class="text">
+            Connexion
+        </div>   
+        <form action='/login_coaches' method="post">
+            <div class="form-row">
+                <div class="input-data">
+                   <input type="text" name="username" required>
+                   <div class="underline"></div>
+                   <label for="">Pseudonyme</label>
+                </div>
+                <div class="input-data">
+                   <input type="password" name="password" required>
+                   <div class="underline"></div>
+                   <label for="">Mot de passe</label>
+                </div>
+            </div>
+            <div class="form-row submit-btn">
+                <div class="input-data">
+                    <div class="inner"></div>
+                    <input type="submit" value="Se Connecter">
+                </div>
+            </div>
+        </form>
+    </div>
+</body>
+</html>
