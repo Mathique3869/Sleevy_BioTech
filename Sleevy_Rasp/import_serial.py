@@ -92,6 +92,9 @@ def function2 () :
         plt.axhline(moyenne, color = 'r')
         plt.axhline(inf, color = 'r')
         plt.axhline(sup, color = 'r')
+        timestamp = datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
+        EMG = f"EMG : {timestamp}.png"
+        plt.savefig(EMG)
         plt.show()
 
 def function3 () :
