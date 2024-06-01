@@ -9,7 +9,7 @@ def index():
 @app.route('/startrec')
 def startrec():
     RecPPGEMG.all()
-    return 'prout'
+    return 
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0')
