@@ -52,7 +52,7 @@ def EMG () :
 
             #print(moyenne)
 
-            if (time.time()-start_time>=40):
+            if (time.time()-start_time>=80):
                 print(moyenne)
                 print(inf)
                 print(sup)
@@ -283,7 +283,7 @@ def PPG () :
             
             megacount+=1
             
-            if (time.time()-start_time>=40):
+            if (time.time()-start_time>=80):
             
                         
                 moy =moy[1:]
@@ -331,7 +331,7 @@ def PPG () :
 
 
 
-if __name__ == '__main__': 
+#if __name__ == '__main__': 
     #results = [None, None]
     #thread1 = threading.Thread(target = EMG)
     #thread2 = threading.Thread(target = PPG, args = (results, 1))
@@ -341,7 +341,7 @@ if __name__ == '__main__':
 
     #thread1.join()
     #thread2.join()
-
+def all():
     process1 = Process(target=EMG)
     process2 = Process(target = PPG)
     process2.start()
@@ -349,4 +349,4 @@ if __name__ == '__main__':
     process1.join()
     process2.join()
 
-    
+
