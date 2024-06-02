@@ -9,18 +9,23 @@ from sqlalchemy import desc
 from PIL import Image
 from io import BytesIO
 import os
+import requests
+
 
 @app.route('/')
 def index():
     return render_template('main.html')
 
+
 @app.route('/register')
 def register():
     return render_template('register.html')
 
+
 @app.route('/login')
 def login():
-    return render_template('login.html')    
+    return render_template('login.html')
+
 
 @app.route('/add', methods=['POST'])
 def add_data():
@@ -29,20 +34,18 @@ def add_data():
     new_data = Charts(type=type, charts64=charts64)
     db.session.add(new_data)
     db.session.commit()
-    
-
-
 
 
 @app.route('/graph/<username>')
 def create_charts(username):
-    emg=Charts.query.order_by(desc(Charts.id)).first()
-    emgb64=emg.charts64
-    cat=emg.type
+    emg = Charts.query.order_by(desc(Charts.id)).first()
+    emgb64 = emg.charts64
+    cat = emg.type
     img = base64.b64decode(emgb64)
     image = Image.open(BytesIO(img))
-    date= datetime.now().strftime("%d_%m_%Y_%Hh%M")
-    image.save("C:/Users/achil/Desktop/Entrainement/"+username+"_"+cat+"_"+date+".png")
+    date = datetime.now().strftime("%d_%m_%Y_%Hh%M")
+    image.save("C:/Users/achil/Desktop/Entrainement/" +
+               username+"_"+cat+"_"+date+".png")
     flash("Les graphiques d'entrainement de "+username+" ont été créés ")
     return redirect(url_for('players'))
 
@@ -57,35 +60,33 @@ def register_coaches():
     new_coach.set_password(form['password'])
     db.session.add(new_coach)
     db.session.commit()
-    
+
     coach = Coach.query.filter_by(username=form['username']).first()
     if coach:
         session['coach'] = coach.id
         return redirect(url_for('players'))
     else:
-        flash ("ERREUR")
-        return redirect(url_for('players'))
+        return redirect(url_for('register'))
+
 
 @app.route('/login_coaches', methods=['POST'])
 def login_coaches():
     form = request.form
     coach = Coach.query.filter_by(username=form['username']).first()
     if not coach:
-        flash("Ce coach n'existe pas")
-        return redirect(url_for('index'))
+        return redirect(url_for('login'))
     if coach.check_password(form['password']):
         session['coach'] = coach.id
         return redirect(url_for('players'))
     else:
-        flash('Le mot de passe est faux')
-        return redirect(url_for('index'))
+        return redirect(url_for('login'))
 
 
 @app.route('/players', methods=['POST', 'GET'])
 def players():
-    coach_id=None
+    coach_id = None
     if session['coach']:
-        coach_id=session['coach']
+        coach_id = session['coach']
         players = Player.query.filter_by(coach_id=coach_id)
         return render_template('players.html', players=players)
     return render_template('players.html')
@@ -96,23 +97,34 @@ def logout():
     session.pop('coach', None)
     return redirect(url_for('index'))
 
+
 @app.route('/register_player', methods=['POST'])
 def register_player():
     form = request.form
-    username= form['username']
-    new_player =  Player.query.filter_by(username=username).first()
+    username = form['username']
+    new_player = Player.query.filter_by(username=username).first()
     if not new_player:
         new_player = Player(
-            username = form['username'],
-            game = form['game'],
-            coach_id = session['coach'],
+            username=form['username'],
+            game=form['game'],
+            coach_id=session['coach'],
         )
         db.session.add(new_player)
         db.session.commit()
-        flash('Le joueur à été ajouté avec succès')
         return redirect(url_for('players'))
     else:
-        flash("Joueur déjà existant")
         return redirect(url_for('players'))
 
 
+@app.route('/rec_start')
+def rec_start():
+    try:
+        # Remplacez l'adresse IP par celle de votre Raspberry Pi
+        response = requests.get('http://192.168.190.172:5000/startrec')
+        if response.status_code == 200:
+            print(response.text)
+            return redirect(url_for('players'))
+        else:
+            return "Erreur lors de la requête au serveur Raspberry Pi"
+    except requests.exceptions.RequestException as e:
+        return f"Erreur lors de la requête au serveur Raspberry Pi : {e}"
