@@ -1,56 +1,70 @@
 <!DOCTYPE html>
 <html lang="fr">
+
 <head>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/players.css') }}">
     <meta charset="UTF-8">
     <title>Sleevy</title>
 </head>
-    <div class="title">
-        Sleevy
+<div class="title">
+    Sleevy
+</div>
+<div class="container">
+    <div class="text">
+        Bienvenue Coach
     </div>
-    <div class="container">
-        <div class="text">
-            Bienvenue Coach 
-         </div>
-    </div class="container">  
-    <div class="container"> 
-        <div class="text">
-           Ajouter un joueur
-        </div>
-        <form name='player_registration' action="{{ url_for('register_player') }}" method="post"> 
-            <div class="form-row">
-                <div class="input-data">
-                   <input type="text" name="username" required>
-                   <div class="underline"></div>
-                   <label for="">Pseudonyme</label>
-                </div>
-                <div class="input-data">
-                    <input type="text" name="game" required>
-                    <div class="underline"></div>
-                    <label for="">Jeu</label>
-                </div>
+</div class="container">
+<div class="container">
+    <div class="text">
+        Ajouter un joueur
+    </div>
+    <form name='player_registration' action="{{ url_for('register_player') }}" method="post">
+        <div class="form-row">
+            <div class="input-data">
+                <input type="text" name="username" required>
+                <div class="underline"></div>
+                <label for="">Pseudonyme</label>
             </div>
-            <div class="form-row submit-btn">
-                <div class="input-data">
-                    <div class="inner"></div>
-                    <input type="submit" value="Ajouter">
-                </div>
+            <div class="input-data">
+                <input type="text" name="game" required>
+                <div class="underline"></div>
+                <label for="">Jeu</label>
             </div>
-        </form>
-    </div>
-    <div class="container">
-        <div class="text"></div>
-        <div class="text">
-           Liste de joueur
         </div>
-        <div id="player_list">
-            <p>Id</p><p>Pseudo</p><p>Jeu</p><p>Graphique</p>
-            {% for player in players %}
-            <p>{{player.id}}</p><p>{{player.username}}</p><p>{{player.game}}</p><a href="{{ url_for('create_charts', username=player.username) }}">Graphiqe d'entrainement</a>
-            {% endfor %}
+        <div class="form-row submit-btn">
+            <div class="input-data">
+                <div class="inner"></div>
+                <input type="submit" value="Ajouter">
+            </div>
         </div>
+    </form>
+</div>
+<div class="container custom-button-container">
+    <button class="custom-button" onclick="window.location.href='/rec_start';">
+        <div class="inner"></div>
+        <span>Lancer l'enregistrement</span>
+    </button>
+    <button class="custom-button" onclick="window.location.href='http://192.168.190.172:5000';">
+        <div class="inner"></div>
+        <span>Stopper l'enregistrement</span>
+    </button>
+</div>
+<div class="container">
+    <div class="text"></div>
+    <div class="text">
+        Liste de joueur
     </div>
-    <a href="{{ url_for('logout') }}"> Logout </a>
-
-         
- 
+    <div id="player_list">
+        <p>Id</p>
+        <p>Pseudo</p>
+        <p>Jeu</p>
+        <p>Graphique</p>
+        {% for player in players %}
+        <p>{{player.id}}</p>
+        <p>{{player.username}}</p>
+        <p>{{player.game}}</p><a href="{{ url_for('create_charts', username=player.username) }}">Graphiqe
+            d'entrainement</a>
+        {% endfor %}
+    </div>
+</div>
+<a href="{{ url_for('logout') }}"> Logout </a>
