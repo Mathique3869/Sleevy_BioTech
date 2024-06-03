@@ -119,7 +119,6 @@ def register_player():
 @app.route('/rec_start')
 def rec_start():
     try:
-        # Remplacez l'adresse IP par celle de votre Raspberry Pi
         response = requests.get('http://192.168.190.172:5000/startrec')
         if response.status_code == 200:
             print(response.text)
