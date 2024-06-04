@@ -35,8 +35,8 @@ duree_max = 40
 temps_debut = time.time()
 
 def EMG (stop_event) :
-    start_time=time.time()
-    try:
+    #start_time=time.time()
+    #try:
         while not stop_event.is_set():
             # Lire une ligne de données série
             line = ser.readline().decode().strip()
@@ -93,22 +93,22 @@ def EMG (stop_event) :
 
             
             
-    except KeyboardInterrupt:
+    #except KeyboardInterrupt:
         # Fermer le port série lorsqu'on interrompt le programme
-        ser.close()
-        print(moyenne)
-        print(inf)
-        print(sup)
+        #ser.close()
+        #print(moyenne)
+        #print(inf)
+        #print(sup)
         
 
-        plt.plot(EMG_values, color = 'b')
-        plt.axhline(moyenne, color = 'r')
-        plt.axhline(inf, color = 'r')
-        plt.axhline(sup, color = 'r')
-        timestamp = datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
-        EMG = f"EMG : {timestamp}.png"
-        plt.savefig(EMG)
-        plt.show()
+        #plt.plot(EMG_values, color = 'b')
+        #plt.axhline(moyenne, color = 'r')
+        #plt.axhline(inf, color = 'r')
+        #plt.axhline(sup, color = 'r')
+        #timestamp = datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
+        #EMG = f"EMG : {timestamp}.png"
+        #plt.savefig(EMG)
+        #plt.show()
 
 
 def PPG (stop_event) :
