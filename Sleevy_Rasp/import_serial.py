@@ -61,41 +61,46 @@ def function1 () :
         ser.close()
 
 def function2 () :
-    try:
+    #try:
         while True:
+            #try :
             # Lire une ligne de données série
-            line = ser.readline().decode().strip()
+                line = ser.readline().decode().strip()
             #print("Données reçues:", line)
-            a = int(line)
-            EMG_values.append(a)
-            print(EMG_values)
+                if (line == '') :
+                    pass
+                else :
+                    a = int(line)
+                    print(a)
+                    EMG_values.append(a)
+                    print(EMG_values)
 
-            somme = sum(EMG_values)
-            moyenne = somme/len(EMG_values)
-            
-            pourcent = 0.1*moyenne
+                    somme = sum(EMG_values)
+                    moyenne = somme/len(EMG_values)
+                
+                    pourcent = 0.1*moyenne
 
-            inf = moyenne - pourcent
-            sup = moyenne + pourcent
+                    inf = moyenne - pourcent
+                    sup = moyenne + pourcent
 
             #print(moyenne)
-
+        print('a')
             
             
-    except KeyboardInterrupt:
+            #except KeyboardInterrupt:
         # Fermer le port série lorsqu'on interrompt le programme
-        ser.close()
-        print(moyenne)
-        print(inf)
-        print(sup)
-        plt.plot(EMG_values, color = 'b')
-        plt.axhline(moyenne, color = 'r')
-        plt.axhline(inf, color = 'r')
-        plt.axhline(sup, color = 'r')
-        timestamp = datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
-        EMG = f"EMG : {timestamp}.png"
-        plt.savefig(EMG)
-        plt.show()
+                #ser.close()
+                #print(moyenne)
+                #print(inf)
+                #print(sup)
+                #plt.plot(EMG_values, color = 'b')
+                #plt.axhline(moyenne, color = 'r')
+                #plt.axhline(inf, color = 'r')
+                #plt.axhline(sup, color = 'r')
+                #timestamp = datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
+                #EMG = f"EMG : {timestamp}.png"
+                #plt.savefig(EMG)
+                #plt.show()
 
 def function3 () :
     moyenne = 441
