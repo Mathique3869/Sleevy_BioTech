@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 from datetime import datetime
 import time
-
+from globals import stop_event
 import time
 import max30102
 import hrcalc
@@ -11,7 +11,10 @@ import matplotlib.pyplot as plt
 import numpy as np
 from scipy.signal import filtfilt, iirfilter, butter, lfilter, wiener, medfilt
 from scipy import fftpack
+from matplotlib.figure import Figure
 #arange
+import requests
+import base64
 from scipy.signal import find_peaks
 import heartpy as hp
 # import pywt
@@ -31,66 +34,84 @@ ping = 0
 duree_max = 40
 temps_debut = time.time()
 
-def EMG () :
-    start_time=time.time()
-    try:
-        while True:
+def EMG (stop_event) :
+    #start_time=time.time()
+    #try:
+        while not stop_event.is_set():
             # Lire une ligne de données série
             line = ser.readline().decode().strip()
-            #print("Données reçues:", line)
-            a = int(line)
-            EMG_values.append(a)
-            #print(EMG_values)
+            if (line == '') :
+                pass
+            else :
+                #print("Données reçues:", line)
+                a = int(line)
+                EMG_values.append(a)
+                #print(EMG_values)
 
-            somme = sum(EMG_values)
-            moyenne = somme/len(EMG_values)
-            
-            pourcent = 0.1*moyenne
+                somme = sum(EMG_values)
+                moyenne = somme/len(EMG_values)
+                
+                pourcent = 0.1*moyenne
 
-            inf = moyenne - pourcent
-            sup = moyenne + pourcent
+                inf = moyenne - pourcent
+                sup = moyenne + pourcent
 
             #print(moyenne)
-
-            if (time.time()-start_time>=80):
-                print(moyenne)
-                print(inf)
-                print(sup)
+        fig = Figure()
+        ax = fig.subplots()
+        ax.plot(EMG_values, color ='b')
+        ax.axhline(moyenne, color = 'r')
+        ax.axhline(inf, color = 'r')
+        ax.axhline(sup, color = 'r')
+        fig.savefig('EMG.png', format='png')
+        url=f'http://192.168.190.198:5000/add'
+        type='EMG'
+        with open('EMG.png', 'rb') as image_file:
+            image_base64 = base64.b64encode(image_file.read()).decode('utf-8')
+        data={
+            'type' : type,
+            'charts64': image_base64
+        }
+        send = requests.post(url, json=data)
+        return
+    
+        #print(moyenne)
+        #print(inf)
+        #print(sup)
                 
 
-                plt.plot(EMG_values, color = 'b')
-                plt.axhline(moyenne, color = 'r')
-                plt.axhline(inf, color = 'r')
-                plt.axhline(sup, color = 'r')
-                timestamp = datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
-                EMG = f"EMG : {timestamp}.png"
-                plt.savefig(EMG)
-                plt.show()
+        #plt.plot(EMG_values, color = 'b')
+        #plt.axhline(moyenne, color = 'r')
+        #plt.axhline(inf, color = 'r')
+        #timestamp = datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
+        #EMG = f"EMG : {timestamp}.png"
+        #plt.savefig(EMG)
+        #plt.show()
 
                 
 
 
             
             
-    except KeyboardInterrupt:
+    #except KeyboardInterrupt:
         # Fermer le port série lorsqu'on interrompt le programme
-        ser.close()
-        print(moyenne)
-        print(inf)
-        print(sup)
+        #ser.close()
+        #print(moyenne)
+        #print(inf)
+        #print(sup)
         
 
-        plt.plot(EMG_values, color = 'b')
-        plt.axhline(moyenne, color = 'r')
-        plt.axhline(inf, color = 'r')
-        plt.axhline(sup, color = 'r')
-        timestamp = datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
-        EMG = f"EMG : {timestamp}.png"
-        plt.savefig(EMG)
-        plt.show()
+        #plt.plot(EMG_values, color = 'b')
+        #plt.axhline(moyenne, color = 'r')
+        #plt.axhline(inf, color = 'r')
+        #plt.axhline(sup, color = 'r')
+        #timestamp = datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
+        #EMG = f"EMG : {timestamp}.png"
+        #plt.savefig(EMG)
+        #plt.show()
 
 
-def PPG () :
+def PPG (stop_event) :
     
     BPM_values = []
     bpm=[]
@@ -155,7 +176,7 @@ def PPG () :
 
     start_time=time.time()
 
-    while True:
+    while not stop_event.is_set():
         time.sleep(Interval)
         red, ir = m.read_fifo()
     #    print (red,ir)
@@ -283,44 +304,68 @@ def PPG () :
             
             megacount+=1
             
-            if (time.time()-start_time>=80):
+            
             
                         
-                moy =moy[1:]
-                temps = temps[1:]
+    moy =moy[1:]
+    temps = temps[1:]
                 # Calcul de la courbe de tendance d'ordre n
-                coefficients = np.polyfit(temps, moy, deg=2)  # deg=3 pour un polynôme d'ordre 3
-                polynome = np.poly1d(coefficients)
+    coefficients = np.polyfit(temps, moy, deg=2)  # deg=3 pour un polynôme d'ordre 3
+    polynome = np.poly1d(coefficients)
 
                 # Génération de données pour la courbe de tendance
-                x_tendance = np.linspace(min(temps), max(temps), 100)
-                y_tendance = polynome(x_tendance)
+    x_tendance = np.linspace(min(temps), max(temps), 100)
+    y_tendance = polynome(x_tendance)
 
-                coefficients2 = np.polyfit(temps, moy, deg=3)  # deg=3 pour un polynôme d'ordre 3
-                polynome2 = np.poly1d(coefficients2)
+    coefficients2 = np.polyfit(temps, moy, deg=3)  # deg=3 pour un polynôme d'ordre 3
+    polynome2 = np.poly1d(coefficients2)
 
                 # Génération de données pour la courbe de tendance
-                x_tendance2 = np.linspace(min(temps), max(temps), 100)
-                y_tendance2 = polynome2(x_tendance2)
+    x_tendance2 = np.linspace(min(temps), max(temps), 100)
+    y_tendance2 = polynome2(x_tendance2)
 
-                moy_liss=lissage(moy,5)
+    moy_liss=lissage(moy,5)
+
+
                 
 
                 # Tracé des données et de la courbe de tendance
 
-                plt.scatter(temps, moy, label='BPM')
-                plt.plot(x_tendance, y_tendance, color='red', label='Courbe de tendance (ordre 2)')
-                plt.plot(x_tendance2, y_tendance2, color='green', label='Courbe de tendance (ordre 3)')
-                plt.plot(temps, moy_liss, color='blue', label='lissage')
-                plt.xlabel('Temps')
-                plt.ylabel('BPM')
-                plt.title('Courbe de tendance')
-                plt.legend()
-                plt.grid(True)
-                timestamp = datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
-                TEST = f"PPG : {timestamp}.png"
-                plt.savefig(TEST)
-                plt.show()
+                #plt.scatter(temps, moy, label='BPM')
+                #plt.plot(x_tendance, y_tendance, color='red', label='Courbe de tendance (ordre 2)')
+                #plt.plot(x_tendance2, y_tendance2, color='green', label='Courbe de tendance (ordre 3)')
+                #plt.plot(temps, moy_liss, color='blue', label='lissage')
+                #plt.xlabel('Temps')
+                #plt.ylabel('BPM')
+                #plt.title('Courbe de tendance')
+                #plt.legend()
+                #plt.grid(True)
+                #timestamp = datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
+                #TEST = f"PPG : {timestamp}.png"
+                #plt.savefig(TEST)
+                #plt.show()
+    fig = Figure()
+    ax = fig.subplots()
+    ax.scatter(temps, moy, label='BPM')
+    ax.plot(x_tendance, y_tendance, color='red', label='Courbe de tendance (ordre 2)')
+    ax.plot(x_tendance2, y_tendance2, color='green', label='Courbe de tendance (ordre 3)')
+    ax.plot(temps, moy_liss, color='blue', label='lissage')
+    ax.set_xlabel('Temps')
+    ax.set_ylabel('BPM')
+    ax.set_title('Courbe de tendance')
+    ax.legend()
+    ax.grid(True)
+    fig.savefig('PPG.png', format='png')
+    url=f'http://192.168.190.198:5000/add'
+    type='PPG'
+    with open('PPG.png', 'rb') as image_file:
+        image_base64 = base64.b64encode(image_file.read()).decode('utf-8')
+    data={
+        'type' : type,
+        'charts64': image_base64
+    }
+    send = requests.post(url, json=data)
+    
 
             
 
@@ -331,22 +376,16 @@ def PPG () :
 
 
 
-#if __name__ == '__main__': 
-    #results = [None, None]
-    #thread1 = threading.Thread(target = EMG)
-    #thread2 = threading.Thread(target = PPG, args = (results, 1))
-
-    #thread1.start()
-    #thread2.start()
-
-    #thread1.join()
-    #thread2.join()
 def all():
-    process1 = Process(target=EMG)
-    process2 = Process(target = PPG)
-    process2.start()
-    process1.start()
-    process1.join()
-    process2.join()
+    thread1 = threading.Thread(target = EMG, args=(stop_event,))
+    thread2 = threading.Thread(target = PPG, args = (stop_event,))
+
+    thread1.start()
+    thread2.start()
+
+    thread1.join()
+    thread2.join()
+
+   
 
 
