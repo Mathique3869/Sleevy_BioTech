@@ -38,17 +38,26 @@ def add_data():
 
 @app.route('/graph/<username>')
 def create_charts(username):
-    emg = Charts.query.order_by(desc(Charts.id)).first()
-    emgb64 = emg.charts64
-    cat = emg.type
-    img = base64.b64decode(emgb64)
-    image = Image.open(BytesIO(img))
-    date = datetime.now().strftime("%d_%m_%Y_%Hh%M")
-    image.save("C:/Users/achil/Desktop/Entrainement/" +
-               username+"_"+cat+"_"+date+".png")
-    flash("Les graphiques d'entrainement de "+username+" ont été créés ")
+    emg = Charts.query.filter_by(type="EMG").order_by(desc(Charts.id)).first()
+    if emg:
+        emgb64 = emg.charts64
+        catemg = emg.type
+        imgemg = base64.b64decode(emgb64)
+        imageemg = Image.open(BytesIO(imgemg))
+        date = datetime.now().strftime("%d_%m_%Y_%Hh%M")
+        imageemg.save("C:/Users/achil/Desktop/Entrainement/" +
+                      username + "_" + catemg + "_" + date + ".png")
+    ppg = Charts.query.filter_by(type="PPG").order_by(desc(Charts.id)).first()
+    if ppg:
+        ppgb64 = ppg.charts64
+        catppg = ppg.type
+        imgppg = base64.b64decode(ppgb64)
+        imageppg = Image.open(BytesIO(imgppg))
+        date = datetime.now().strftime("%d_%m_%Y_%Hh%M")
+        imageppg.save("C:/Users/achil/Desktop/Entrainement/" +
+                      username + "_" + catppg + "_" + date + ".png")
     return redirect(url_for('players'))
-
+  
 
 @app.route('/register_coaches', methods=['POST'])
 def register_coaches():
@@ -127,3 +136,17 @@ def rec_start():
             return "Erreur lors de la requête au serveur Raspberry Pi"
     except requests.exceptions.RequestException as e:
         return f"Erreur lors de la requête au serveur Raspberry Pi : {e}"
+    
+
+@app.route('/rec_stop')
+def rec_stop():
+    try:
+        response = requests.get('http://192.168.190.172:5000/stoprec')
+        if response.status_code == 200:
+            print(response.text)
+            return redirect(url_for('players'))
+        else:
+            return "Erreur lors de la requête au serveur Raspberry Pi"
+    except requests.exceptions.RequestException as e:
+        return f"Erreur lors de la requête au serveur Raspberry Pi : {e}"
+
