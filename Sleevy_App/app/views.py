@@ -38,7 +38,6 @@ def add_data():
 
 @app.route('/graph/<username>')
 def create_charts(username):
-    # Gestion des charts de type EMG
     emg = Charts.query.filter_by(type="EMG").order_by(desc(Charts.id)).first()
     if emg:
         emgb64 = emg.charts64
@@ -48,10 +47,6 @@ def create_charts(username):
         date = datetime.now().strftime("%d_%m_%Y_%Hh%M")
         imageemg.save("C:/Users/achil/Desktop/Entrainement/" +
                       username + "_" + catemg + "_" + date + ".png")
-    else:
-        print("Aucun enregistrement de type 'EMG' trouvé")
-
-    # Gestion des charts de type PPG
     ppg = Charts.query.filter_by(type="PPG").order_by(desc(Charts.id)).first()
     if ppg:
         ppgb64 = ppg.charts64
@@ -61,11 +56,8 @@ def create_charts(username):
         date = datetime.now().strftime("%d_%m_%Y_%Hh%M")
         imageppg.save("C:/Users/achil/Desktop/Entrainement/" +
                       username + "_" + catppg + "_" + date + ".png")
-    else:
-        print("Aucun enregistrement de type 'PPG' trouvé")
-    
     return redirect(url_for('players'))
-
+  
 
 @app.route('/register_coaches', methods=['POST'])
 def register_coaches():
